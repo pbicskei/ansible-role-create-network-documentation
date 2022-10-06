@@ -7,3 +7,5 @@
 **/.env
 # Ignore .functions
 **/.functions
+# Ignore NOTES.md
+NOTES.md
