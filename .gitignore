@@ -8,4 +8,4 @@
 # Ignore .functions
 **/.functions
 # Ignore NOTES.md
-NOTES.md
+**/NOTES.md
