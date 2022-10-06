@@ -1,4 +1,5 @@
 galaxy_info:
+  role_name: create-network-documentation
   author: Peter Bicskei
   description: A role that document my UniFi network configuration using docker and Art-Of-Wifi
   license: BSD-3-Clause
