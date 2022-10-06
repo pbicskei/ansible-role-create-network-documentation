@@ -1,0 +1,8 @@
+galaxy_info:
+  author: Peter Bicskei
+  description: A role that document my UniFi network configuration using docker and Art-Of-Wifi
+  license: BSD-3-Clause
+  min_ansible_version: 2.1
+  galaxy_tags:
+  - network
+  dependencies: []

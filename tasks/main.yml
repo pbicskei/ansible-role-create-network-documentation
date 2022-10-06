@@ -1,0 +1,47 @@
+---
+# tasks file for create-network-documentation
+- name: Ensure the output directory exists
+  file:
+    path: "{{ output_path }}/{{ item }}"
+    state: directory
+  with_items:
+    - templates
+    - docs
+
+- name: Make API call by run.sh script
+  ansible.builtin.script: ubnt_api_call.sh {{ api_call }}
+  register: ubnt_networkconf
+
+- name: Load expected values from file
+  command: cat ../output.list
+  register: output_value_keys
+
+- name: Set temlate facts
+  set_fact:
+    network_names: "{{ ubnt_networkconf.stdout | from_json | items2dict(key_name='name', value_name='name')  }}"
+    network_confs: "{{ ubnt_networkconf.stdout | from_json | list }}"
+    site_ids: "{{ ubnt_networkconf.stdout | from_json | items2dict(key_name='site_id', value_name='site_id') | unique }}"
+    network_value_keys: "{{ output_value_keys.stdout_lines }}"
+  when: ubnt_networkconf.stdout is defined
+
+- debug:
+    msg: "{{ item }}"
+  with_items: "{{ network_value_keys }}"
+
+- name: Generate markdown.j2
+  ansible.builtin.template:
+    src: document.j2
+    dest: "{{ output_path }}/templates/markdown.j2"
+    mode: '0644'
+  loop: 
+    - "{{ network_value_keys }}"
+
+- name: Generate main_unifi.md
+  ansible.builtin.template:
+    src: "{{ output_path }}/templates/markdown.j2"
+    dest: "{{ output_path }}/docs/main_unifi.md"
+    mode: '0644'
+  when: 
+    - network_names is defined
+    - network_confs is defined
+    - site_ids is defined

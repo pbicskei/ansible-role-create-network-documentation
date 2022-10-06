@@ -1,0 +1,4 @@
+---
+# defaults file for create-network-documentation
+output_path: .build
+api_call: list_networkconf
