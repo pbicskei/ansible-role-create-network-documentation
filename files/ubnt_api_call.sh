@@ -9,6 +9,7 @@ output="$(docker run --rm --name ubnt_api_call \
 -e CONTROLLER_VERSION=${UBNT_VERSION} \
 $IMAGE_NAME:$IMAGE_VERSION calls/$1.php)"
 echo $output
+sleep 2
 exit 0
 else
 exit 1

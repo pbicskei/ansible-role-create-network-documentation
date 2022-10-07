@@ -1,0 +1,21 @@
+# {{ file_prefix | title }} | Autodoc by Ansible
+
+{{'## {{ api_call | title }}'}}
+
+{{'### {{ header | title }}'}}
+{{'{% for site_id in site_ids | unique %}'}}
+
+{{'Site ID: `{{ site_id }}`'}}
+{{'{% for config in response_data %}'}}
+
+{{'#### {{ config.name | title }}'}}
+
+{{'{% if config.site_id == site_id %}'}}
+{% for response_key in response_keys | unique %}
+{{ '{% if config.' + response_key + ' is defined %}'}}
+* {{ response_key }}: `{{ '{{ config.' + response_key + ' }}' }}`
+{{ '{% endif %}' }}
+{% endfor %}
+{{ '{% endif %}' }}
+{{ '{% endfor %}' }}
+{{ '{% endfor %}' }}

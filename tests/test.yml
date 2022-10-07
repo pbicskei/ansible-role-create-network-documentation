@@ -3,5 +3,118 @@
   connection: local
   gather_facts: False
 
+  pre_tasks:
+    - name: Ensure the output directory exists
+      file:
+        path: .build
+        state: absent
+      with_items:
+        - templates
+        - docs
+
   roles:
-    - ../ansible-role-create-network-documentation
+        
+    - role: ../ansible-role-create-network-documentation
+      vars:
+        file_prefix: UniFi
+        has_template: true
+        api_call: list_self
+
+    - role: ../ansible-role-create-network-documentation
+      vars:
+        file_prefix: UniFi
+        has_template: true
+        api_call: list_networkconf
+
+    - role: ../ansible-role-create-network-documentation
+      vars:
+        file_prefix: UniFi
+        has_template: true
+        api_call: list_devices
+
+    - role: ../ansible-role-create-network-documentation
+      vars:
+        file_prefix: UniFi
+        has_template: true
+        api_call: list_dashboard
+
+    # - role: ../ansible-role-create-network-documentation
+    #   vars:
+    #     file_prefix: UniFi
+    #     has_template: true
+    #     api_call: list_health
+
+
+    # - role: ../ansible-role-create-network-documentation
+    #   vars:
+    #     file_prefix: UniFi
+    #     has_template: true
+    #     api_call: list_portconf
+
+
+    # - role: ../ansible-role-create-network-documentation
+    #   vars:
+    #     file_prefix: UniFi
+    #     has_template: true
+    #     api_call: list_guests
+
+    # - role: ../ansible-role-create-network-documentation
+    #   vars:
+    #     file_prefix: UniFi
+    #     has_template: true
+    #     api_call: list_clients
+
+    # - role: ../ansible-role-create-network-documentation
+    #   vars:
+    #     file_prefix: UniFi
+    #     has_template: true
+    #     api_call: list_radius_profiles
+
+    # - role: ../ansible-role-create-network-documentation
+    #   vars:
+    #     file_prefix: UniFi
+    #     has_template: true
+    #     api_call: list_radius_accounts
+
+    # - role: ../ansible-role-create-network-documentation
+    #   vars:
+    #     file_prefix: UniFi
+    #     has_template: true
+    #     api_call: list_firewallgroups
+
+          # - list_dashboard
+          # - list_health
+          # - list_networkconf
+          # - list_devices
+          # - list_portconf
+          # - list_guests
+          # - list_clients
+          # - list_radius_profiles
+          # - list_radius_accounts
+          # - list_rogueaps
+          # - list_routing
+          # - list_self
+          # - list_settings
+          # - list_sites
+          # - list_tags
+          # - list_usergroups
+          # - list_users
+          # - list_wlan_groups
+          # - list_firewallgroups
+
+          # - list_alarms
+          # - list_all_admins
+          # - list_apgroups
+          # - list_backups
+          # - list_country_codes
+          # - list_current_channels
+          # - list_device_name_mappings
+          # - list_dpi_stats
+          # - list_dynamicdns
+          # - list_events
+          # - list_extension
+          # - list_firmware
+          # - list_hotspotop
+          # - list_known_rogueaps
+          # - list_portforward_stats
+          # - list_portforwarding

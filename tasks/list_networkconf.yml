@@ -1,0 +1,5 @@
+---
+# tasks file for create-network-documentation
+- set_fact:
+    headers: Network config
+    site_ids: "{{ api_call_output.stdout | from_json | items2dict(key_name='site_id', value_name='site_id') }}"

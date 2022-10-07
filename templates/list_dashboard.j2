@@ -1,0 +1,14 @@
+# {{ file_prefix | title }} | Autodoc by Ansible
+
+{{'## {{ api_call | title }}'}}
+
+### {{ header | title }}
+
+{{'{% for config in response_data %}'}}
+
+{% for response_key in response_keys | unique %}
+{{ '{% if config.' + response_key + ' is defined %}'}}
+* {{ response_key }}: `{{ '{{ config.' + response_key + ' }}' }}`
+{{ '{% endif %}' }}
+{% endfor %}
+{{ '{% endfor %}' }}

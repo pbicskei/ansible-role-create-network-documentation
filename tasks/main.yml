@@ -8,40 +8,54 @@
     - templates
     - docs
 
-- name: Make API call by run.sh script
+- name: "{{ api_call }} | Make API call by run.sh script"
   ansible.builtin.script: ubnt_api_call.sh {{ api_call }}
-  register: ubnt_networkconf
+  register: api_call_output
 
-- name: Load expected values from file
-  command: cat ../output.list
-  register: output_value_keys
-
-- name: Set temlate facts
+- name: "{{ api_call }} | Set facts for template generation"
   set_fact:
-    network_names: "{{ ubnt_networkconf.stdout | from_json | items2dict(key_name='name', value_name='name')  }}"
-    network_confs: "{{ ubnt_networkconf.stdout | from_json | list }}"
-    site_ids: "{{ ubnt_networkconf.stdout | from_json | items2dict(key_name='site_id', value_name='site_id') | unique }}"
-    network_value_keys: "{{ output_value_keys.stdout_lines }}"
-  when: ubnt_networkconf.stdout is defined
+    response_keys: []
+    response_data: "{{ api_call_output.stdout | from_json }}"
+  when: api_call_output.stdout is defined
 
-- debug:
-    msg: "{{ item }}"
-  with_items: "{{ network_value_keys }}"
+- name: "{{ api_call }} | Prepare keys for 🐡 items"
+  set_fact:
+    response_keys: "{{ response_keys + [ item.key ] }}"
+  with_dict: "{{ response_data }}"
+  when:
+    - response_data is defined
+    - item.key.split('-') | length == 1
 
-- name: Generate markdown.j2
+- name: "{{ api_call }} | Ensure we remove all the doubles 👨‍👩‍👧‍👦"
+  set_fact:
+    response_keys: "{{ response_keys | list | unique }}"
+  when: response_data is defined
+
+- name: "{{ api_call }} | Processing bullseye calls 🎯☎️"
+  include_tasks: "{{ api_call }}.yml"
+  when: response_data is defined
+
+- name: "{{ api_call }} | Generate basic jinja template with {{ api_call }}"
   ansible.builtin.template:
-    src: document.j2
-    dest: "{{ output_path }}/templates/markdown.j2"
-    mode: '0644'
-  loop: 
-    - "{{ network_value_keys }}"
+    src: "basic_call.j2"
+    dest: "{{ output_path }}/templates/{{ api_call }}.j2"
+  when: 
+    - response_keys is defined
+    - has_template is false
 
-- name: Generate main_unifi.md
+- name: Generate {{ api_call }} jinja template
   ansible.builtin.template:
-    src: "{{ output_path }}/templates/markdown.j2"
-    dest: "{{ output_path }}/docs/main_unifi.md"
+    src: "{{ api_call }}.j2"
+    dest: "{{ output_path }}/templates/{{ api_call }}.j2"
     mode: '0644'
   when: 
-    - network_names is defined
-    - network_confs is defined
-    - site_ids is defined
+    - response_keys is defined
+    - has_template is true
+
+- name: Generate document {{ api_call }}.md
+  ansible.builtin.template:
+    src: "{{ output_path }}/templates/{{ api_call }}.j2"
+    dest: "{{ output_path }}/docs/{{ file_prefix }}_{{ api_call }}.md"
+    mode: '0644'
+  when: 
+    - response_data is defined
